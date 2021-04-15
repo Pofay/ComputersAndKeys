@@ -22,4 +22,9 @@ public class ComputersEndpointTests {
     public void full_endpoint_with_manufacturer_and_model_number_returns_200() throws Exception {
         mvc.perform(get("/computers/asus/X507UA")).andExpect(status().isOk());
     }
+
+    @Test
+    public void with_a_saved_computer_requesting_from_full_endpoint_returns_json() {
+
+    }
 }
