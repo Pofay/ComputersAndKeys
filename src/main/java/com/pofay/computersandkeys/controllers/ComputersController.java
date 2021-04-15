@@ -30,15 +30,8 @@ public class ComputersController {
     @GetMapping(value = "/computers/{maker}/{model_number}", produces = "application/json")
     public ResponseEntity getComputerModel(@PathVariable("maker") String maker,
             @PathVariable("model_number") String modelNumber, HttpServletRequest req, HttpServletResponse res) {
-        Optional<Computer> computerOrEmpty = service.findMatchingComputerByMakerAndModel(maker, modelNumber);
-
-        if (computerOrEmpty.isPresent()) {
-            Computer c = computerOrEmpty.get();
-            JSONObject response = ResponseFormatter.composeResponse(c);
-            return ResponseEntity.ok().body(response.toString());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return service.findMatchingComputerByMakerAndModel(maker, modelNumber).map(ResponseFormatter::composeResponse)
+                .map(r -> ResponseEntity.ok().body(r.toString())).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping(value = "/computers/{maker}")
