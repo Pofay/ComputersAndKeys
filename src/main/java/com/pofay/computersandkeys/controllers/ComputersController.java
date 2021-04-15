@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.pofay.computersandkeys.entities.Computer;
 import com.pofay.computersandkeys.repositories.ComputersRepository;
+import com.pofay.computersandkeys.services.ComputersService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,20 +21,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 public class ComputersController {
 
-    private ComputersRepository repository;
+    private ComputersService service;
 
     @Autowired
-    public ComputersController(ComputersRepository repository) {
-        this.repository = repository;
+    public ComputersController(ComputersService service) {
+        this.service = service;
     }
 
     @GetMapping(value = "/computers/{maker}/{model_number}", produces = "application/json")
     public ResponseEntity getComputerModel(@PathVariable("maker") String maker,
             @PathVariable("model_number") String modelNumber, HttpServletRequest req, HttpServletResponse res) {
-        Optional<Computer> computerOrEmpty = repository.findById(modelNumber);
+        Optional<Computer> computerOrEmpty = service.findMatchingComputerByMakerAndModel(maker, modelNumber);
 
         if (computerOrEmpty.isPresent()) {
-            JSONObject response = composeResponse(computerOrEmpty);
+            Computer c = computerOrEmpty.get();
+            JSONObject response = composeResponse(c);
             System.out.println(response.toString());
             return ResponseEntity.ok().body(response.toString());
         } else {
@@ -41,8 +43,7 @@ public class ComputersController {
         }
     }
 
-    private JSONObject composeResponse(Optional<Computer> computerOrEmpty) throws JSONException {
-        Computer c = computerOrEmpty.get();
+    private JSONObject composeResponse(Computer c) throws JSONException {
         JSONObject color = new JSONObject();
         color.put("color", c.getColors());
         JSONObject computerDetails = toJSON(c);
