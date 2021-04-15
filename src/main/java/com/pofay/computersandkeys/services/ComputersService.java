@@ -21,7 +21,6 @@ public class ComputersService {
     public Optional<Computer> findMatchingComputerByMakerAndModel(String maker, String model) {
         return repository.findById(model)
                 .flatMap(c -> c.getMaker().equals(maker.toUpperCase()) ? Optional.of(c) : Optional.empty());
-
     }
 
 }
