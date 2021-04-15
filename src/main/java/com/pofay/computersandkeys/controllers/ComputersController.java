@@ -11,7 +11,6 @@ import com.pofay.computersandkeys.entities.Computer;
 import com.pofay.computersandkeys.services.ComputersService;
 import com.pofay.computersandkeys.utils.ResponseFormatter;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
