@@ -65,4 +65,12 @@ public class ComputersEndpointTests {
 
         mvc.perform(get("/computers/asus/777777")).andExpect(status().isNotFound());
     }
+
+    @Test
+    public void with_only_matching_maker_returns_403() throws Exception {
+        Computer c = new Computer("111111", "ROG", ComputerTypes.LAPTOP, "EN", Arrays.asList("blue"));
+        repo.save(c);
+
+        mvc.perform(get("/computers/rog/")).andExpect(status().isForbidden());
+    }
 }
