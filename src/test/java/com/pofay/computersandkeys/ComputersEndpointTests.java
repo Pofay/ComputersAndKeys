@@ -1,12 +1,9 @@
 package com.pofay.computersandkeys;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.web.servlet.MockMvc;
@@ -50,7 +47,9 @@ public class ComputersEndpointTests {
         Computer c = new Computer("X507UA", "ASUS", ComputerTypes.LAPTOP, "日本語", Arrays.asList("black", "silver"));
         repo.save(c);
 
-        mvc.perform(get("/computers/asus/X507UA")).andExpect(jsonPath("$.computer.type", equalTo("LAPTOP")))
+        String fullEndpoint = "/computers/asus/X507UA";
+
+        mvc.perform(get(fullEndpoint)).andExpect(jsonPath("$.computer.type", equalTo("LAPTOP")))
                 .andExpect(jsonPath("$.computer.model", equalTo("X507UA")))
                 .andExpect(jsonPath("$.computer.language", equalTo("日本語")))
                 .andExpect(jsonPath("$.computer.maker", equalTo("ASUS")))
@@ -63,7 +62,9 @@ public class ComputersEndpointTests {
         Computer c = new Computer("777777", "IBM", ComputerTypes.LAPTOP, "EN", Arrays.asList("red"));
         repo.save(c);
 
-        mvc.perform(get("/computers/asus/777777")).andExpect(status().isNotFound());
+        String endpointWithMatchingModelNonMatchingMaker = "/computers/asus/777777";
+
+        mvc.perform(get(endpointWithMatchingModelNonMatchingMaker)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -71,7 +72,9 @@ public class ComputersEndpointTests {
         Computer c = new Computer("111111", "ROG", ComputerTypes.LAPTOP, "EN", Arrays.asList("blue"));
         repo.save(c);
 
-        mvc.perform(get("/computers/asus/")).andExpect(status().isNotFound());
+        String endpointWithNonMatchingMaker = "/computers/asus/";
+
+        mvc.perform(get(endpointWithNonMatchingMaker)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -79,6 +82,8 @@ public class ComputersEndpointTests {
         Computer c = new Computer("111111", "ROG", ComputerTypes.LAPTOP, "EN", Arrays.asList("blue"));
         repo.save(c);
 
-        mvc.perform(get("/computers/rog/")).andExpect(status().isForbidden());
+        String endpointWithMatchingMaker = "/computers/rog/";
+
+        mvc.perform(get(endpointWithMatchingMaker)).andExpect(status().isForbidden());
     }
 }
