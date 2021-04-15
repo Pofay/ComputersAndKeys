@@ -57,4 +57,12 @@ public class ComputersEndpointTests {
                 .andExpect(jsonPath("$.computer.colors.color", hasItem("black")))
                 .andExpect(jsonPath("$.computer.colors.color", hasItem("silver")));
     }
+
+    @Test
+    public void with_a_saved_computer_request_that_matches_model_but_not_maker_returns_404() throws Exception {
+        Computer c = new Computer("777777", "IBM", ComputerTypes.LAPTOP, "EN", Arrays.asList("red"));
+        repo.save(c);
+
+        mvc.perform(get("/computers/asus/777777")).andExpect(status().isNotFound());
+    }
 }
