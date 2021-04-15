@@ -1,10 +1,9 @@
 package com.pofay.computersandkeys.services;
 
 import java.util.Optional;
-
+import java.util.stream.StreamSupport;
 import com.pofay.computersandkeys.entities.Computer;
 import com.pofay.computersandkeys.repositories.ComputersRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +20,12 @@ public class ComputersService {
     public Optional<Computer> findMatchingComputerByMakerAndModel(String maker, String model) {
         return repository.findById(model)
                 .flatMap(c -> c.getMaker().equals(maker.toUpperCase()) ? Optional.of(c) : Optional.empty());
+    }
+
+    public boolean hasAssociatedModels(String maker) {
+        long numberOfComputers = StreamSupport.stream(repository.findAll().spliterator(), false)
+                .filter(c -> c.getMaker().equals(maker.toUpperCase())).count();
+        return numberOfComputers > 0;
     }
 
 }
