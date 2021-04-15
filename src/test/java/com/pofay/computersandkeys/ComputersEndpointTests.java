@@ -1,5 +1,7 @@
 package com.pofay.computersandkeys;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,23 +37,24 @@ public class ComputersEndpointTests {
     @BeforeEach
     public void setup() {
         mvc = MockMvcBuilders.webAppContextSetup(context).build();
+        repo.deleteAll();
     }
 
-    @Test
-    public void full_endpoint_with_maker_and_model_number_returns_200() throws Exception {
-        mvc.perform(get("/computers/asus/X507UA")).andExpect(status().isOk());
+    @AfterEach
+    public void teardown() {
+        repo.deleteAll();
     }
 
     @Test
     public void with_a_saved_computer_requesting_from_full_endpoint_returns_json() throws Exception {
-        Computer c = new Computer("X507UA", "ASUS", ComputerTypes.LAPTOP, "日本語", Arrays.asList("colors"));
+        Computer c = new Computer("X507UA", "ASUS", ComputerTypes.LAPTOP, "日本語", Arrays.asList("black", "silver"));
         repo.save(c);
 
         mvc.perform(get("/computers/asus/X507UA")).andExpect(jsonPath("$.computer.type", equalTo("LAPTOP")))
                 .andExpect(jsonPath("$.computer.model", equalTo("X507UA")))
                 .andExpect(jsonPath("$.computer.language", equalTo("日本語")))
                 .andExpect(jsonPath("$.computer.maker", equalTo("ASUS")))
-                .andExpect(jsonPath("$.computer.colors.color[:1]", equalTo("black")))
-                .andExpect(jsonPath("$.computer.colors.color[:2]", equalTo("silver")));
+                .andExpect(jsonPath("$.computer.colors.color", hasItem("black")))
+                .andExpect(jsonPath("$.computer.colors.color", hasItem("silver")));
     }
 }
