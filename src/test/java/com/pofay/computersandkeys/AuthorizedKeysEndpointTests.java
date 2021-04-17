@@ -12,8 +12,13 @@ import net.minidev.json.JSONObject;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.pofay.computersandkeys.entities.SSHKey;
+import com.pofay.computersandkeys.repositories.SSHKeyRepository;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +30,8 @@ public class AuthorizedKeysEndpointTests {
     MockMvc mvc;
     @Autowired
     WebApplicationContext context;
+    @Autowired
+    SSHKeyRepository repo;
 
     @BeforeEach
     public void setup() {
@@ -68,4 +75,21 @@ public class AuthorizedKeysEndpointTests {
                 .content(payload.toString())).andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", equalTo("The content of the public key is invalid for type ssh-rsa")));
     }
+
+    @Test
+    public void post_should_store_data_in_db() throws Exception {
+        JSONObject subPayload = new JSONObject();
+        subPayload.put("type", "ssh-ed25519");
+        subPayload.put("public", "AAAAC3NzaC1lZDI1NTE5AAAAIC8MVGWZd6LWisqHcKcupOcMI3vnw4CDjYsBNeF07cZs");
+        subPayload.put("comment", "happy@isr");
+        JSONObject payload = new JSONObject();
+        payload.put("ssh-key", subPayload);
+
+        mvc.perform(post("/build-server/jenkins/authorized_keys").contentType(MediaType.APPLICATION_JSON)
+                .content(payload.toString()));
+
+        SSHKey actual = repo.findById("AAAAC3NzaC1lZDI1NTE5AAAAIC8MVGWZd6LWisqHcKcupOcMI3vnw4CDjYsBNeF07cZs").get();
+        assertEquals("AAAAC3NzaC1lZDI1NTE5AAAAIC8MVGWZd6LWisqHcKcupOcMI3vnw4CDjYsBNeF07cZs", actual.getPublicKey());
+    }
+
 }
