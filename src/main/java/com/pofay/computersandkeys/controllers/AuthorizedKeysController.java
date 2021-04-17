@@ -5,6 +5,8 @@ import java.util.Base64;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pofay.computersandkeys.entities.AuthorizedKey;
+import com.pofay.computersandkeys.repositories.AuthorizedKeysRepository;
 import com.pofay.computersandkeys.requests.AddSSHKeyRequest;
 import com.pofay.computersandkeys.services.KeyVerifierService;
 
@@ -21,15 +23,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthorizedKeysController {
 
     private KeyVerifierService keyVerifier;
+    private AuthorizedKeysRepository repo;
 
     @Autowired
-    public AuthorizedKeysController(KeyVerifierService keyVerifier) {
+    public AuthorizedKeysController(KeyVerifierService keyVerifier, AuthorizedKeysRepository repo) {
         this.keyVerifier = keyVerifier;
+        this.repo = repo;
     }
 
-    @PostMapping(value = "/build-server/{service}/authorized_keys", produces = "application/json")
-    public ResponseEntity addSSHKeyForService(@PathVariable("service") String serviceName,
-            @RequestBody AddSSHKeyRequest body, HttpServletRequest req, HttpServletResponse res) {
+    @PostMapping(value = "/build-server/jenkins/authorized_keys", produces = "application/json")
+    public ResponseEntity addSSHKeyForService(String serviceName, @RequestBody AddSSHKeyRequest body,
+            HttpServletRequest req, HttpServletResponse res) {
 
         if (body == null) {
             return ResponseEntity.badRequest().build();
@@ -37,7 +41,11 @@ public class AuthorizedKeysController {
 
         String key = body.getSshkey().getPublicKey();
         String keyType = body.getSshkey().getType();
+        String comment = body.getSshkey().getComment();
         if (keyVerifier.verifyKeyForKeyType(key, keyType)) {
+            AuthorizedKey authorizedKey = new AuthorizedKey(key, keyType, comment);
+            repo.save(authorizedKey);
+
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }
 

@@ -36,10 +36,12 @@ public class AuthorizedKeysEndpointTests {
     @BeforeEach
     public void setup() {
         mvc = MockMvcBuilders.webAppContextSetup(context).build();
+        repo.deleteAll();
     }
 
     @AfterEach
     public void teardown() {
+        repo.deleteAll();
     }
 
     @Test
