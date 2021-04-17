@@ -13,8 +13,8 @@ import net.minidev.json.JSONObject;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.pofay.computersandkeys.entities.SSHKey;
-import com.pofay.computersandkeys.repositories.SSHKeyRepository;
+import com.pofay.computersandkeys.entities.AuthorizedKey;
+import com.pofay.computersandkeys.repositories.AuthorizedKeysRepository;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.hamcrest.Matchers.*;
@@ -31,7 +31,7 @@ public class AuthorizedKeysEndpointTests {
     @Autowired
     WebApplicationContext context;
     @Autowired
-    SSHKeyRepository repo;
+    AuthorizedKeysRepository repo;
 
     @BeforeEach
     public void setup() {
@@ -88,7 +88,8 @@ public class AuthorizedKeysEndpointTests {
         mvc.perform(post("/build-server/jenkins/authorized_keys").contentType(MediaType.APPLICATION_JSON)
                 .content(payload.toString()));
 
-        SSHKey actual = repo.findById("AAAAC3NzaC1lZDI1NTE5AAAAIC8MVGWZd6LWisqHcKcupOcMI3vnw4CDjYsBNeF07cZs").get();
+        AuthorizedKey actual = repo.findById("AAAAC3NzaC1lZDI1NTE5AAAAIC8MVGWZd6LWisqHcKcupOcMI3vnw4CDjYsBNeF07cZs")
+                .get();
         assertEquals("AAAAC3NzaC1lZDI1NTE5AAAAIC8MVGWZd6LWisqHcKcupOcMI3vnw4CDjYsBNeF07cZs", actual.getPublicKey());
     }
 
