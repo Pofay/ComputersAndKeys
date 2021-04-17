@@ -45,7 +45,7 @@ public class AuthorizedKeysEndpointTests {
     @Test
     public void post_with_body_returns_201() throws Exception {
         JSONObject subPayload = new JSONObject();
-        subPayload.put("type", "ssh-rd25519");
+        subPayload.put("type", "ssh-ed25519");
         subPayload.put("public", "AAAAC3NzaC1lZDI1NTE5AAAAIOiKKC7lLUcyvJMo1gjvMr56XvOq814Hhin0OCYFDqT4");
         subPayload.put("comment", "happy@isr");
         JSONObject payload = new JSONObject();
@@ -59,7 +59,7 @@ public class AuthorizedKeysEndpointTests {
     public void post_with_key_not_matching_key_type_returns_400_with_error_message() throws Exception {
         JSONObject subPayload = new JSONObject();
         subPayload.put("type", "ssh-rsa");
-        subPayload.put("public", "AAAAC3NzaC1lZDI1NTE5AAAAIOiKKC7lLUcyvJMo1gjvMr56XvOq814Hhin0OCYFDqT4");
+        subPayload.put("public", "AAAAC3NzaC1lZDI1NTE5AAAAIC8MVGWZd6LWisqHcKcupOcMI3vnw4CDjYsBNeF07cZs");
         subPayload.put("comment", "happy@isr");
         JSONObject payload = new JSONObject();
         payload.put("ssh-key", subPayload);
