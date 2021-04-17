@@ -8,11 +8,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import net.minidev.json.JSONObject;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.pofay.computersandkeys.RequestBuilders.AuthorizedKeyRequestBuilder;
 import com.pofay.computersandkeys.entities.AuthorizedKey;
 import com.pofay.computersandkeys.repositories.AuthorizedKeysRepository;
 
@@ -20,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,42 +53,33 @@ public class AuthorizedKeysEndpointTests {
 
     @Test
     public void post_with_body_returns_201() throws Exception {
-        JSONObject subPayload = new JSONObject();
-        subPayload.put("type", "ssh-ed25519");
-        subPayload.put("public", "AAAAC3NzaC1lZDI1NTE5AAAAIOiKKC7lLUcyvJMo1gjvMr56XvOq814Hhin0OCYFDqT4");
-        subPayload.put("comment", "happy@isr");
-        JSONObject payload = new JSONObject();
-        payload.put("ssh-key", subPayload);
+        JSONObject request = AuthorizedKeyRequestBuilder.create().withKeyType("ssh-ed25519")
+                .withPublicKey("AAAAC3NzaC1lZDI1NTE5AAAAIOiKKC7lLUcyvJMo1gjvMr56XvOq814Hhin0OCYFDqT4")
+                .withComment("happy@isr").build();
 
         mvc.perform(post("/build-server/jenkins/authorized_keys").contentType(MediaType.APPLICATION_JSON)
-                .content(payload.toString())).andExpect(status().isCreated());
+                .content(request.toString())).andExpect(status().isCreated());
     }
 
     @Test
     public void post_with_key_not_matching_key_type_returns_400_with_error_message() throws Exception {
-        JSONObject subPayload = new JSONObject();
-        subPayload.put("type", "ssh-rsa");
-        subPayload.put("public", "AAAAC3NzaC1lZDI1NTE5AAAAIC8MVGWZd6LWisqHcKcupOcMI3vnw4CDjYsBNeF07cZs");
-        subPayload.put("comment", "happy@isr");
-        JSONObject payload = new JSONObject();
-        payload.put("ssh-key", subPayload);
+        JSONObject request = AuthorizedKeyRequestBuilder.create().withKeyType("ssh-rsa")
+                .withPublicKey("AAAAC3NzaC1lZDI1NTE5AAAAIC8MVGWZd6LWisqHcKcupOcMI3vnw4CDjYsBNeF07cZs")
+                .withComment("happy@isr").build();
 
         mvc.perform(post("/build-server/jenkins/authorized_keys").contentType(MediaType.APPLICATION_JSON)
-                .content(payload.toString())).andExpect(status().isBadRequest())
+                .content(request.toString())).andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", equalTo("The content of the public key is invalid for type ssh-rsa")));
     }
 
     @Test
     public void post_should_store_data_in_db() throws Exception {
-        JSONObject subPayload = new JSONObject();
-        subPayload.put("type", "ssh-ed25519");
-        subPayload.put("public", "AAAAC3NzaC1lZDI1NTE5AAAAIC8MVGWZd6LWisqHcKcupOcMI3vnw4CDjYsBNeF07cZs");
-        subPayload.put("comment", "happy@isr");
-        JSONObject payload = new JSONObject();
-        payload.put("ssh-key", subPayload);
+        JSONObject request = AuthorizedKeyRequestBuilder.create().withKeyType("ssh-ed25519")
+                .withPublicKey("AAAAC3NzaC1lZDI1NTE5AAAAIC8MVGWZd6LWisqHcKcupOcMI3vnw4CDjYsBNeF07cZs")
+                .withComment("happy@isr").build();
 
         mvc.perform(post("/build-server/jenkins/authorized_keys").contentType(MediaType.APPLICATION_JSON)
-                .content(payload.toString()));
+                .content(request.toString()));
 
         AuthorizedKey actual = repo.findById("AAAAC3NzaC1lZDI1NTE5AAAAIC8MVGWZd6LWisqHcKcupOcMI3vnw4CDjYsBNeF07cZs")
                 .get();
