@@ -12,6 +12,8 @@ import net.minidev.json.JSONObject;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.hamcrest.Matchers.*;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,4 +55,17 @@ public class AuthorizedKeysEndpointTests {
                 .content(payload.toString())).andExpect(status().isCreated());
     }
 
+    @Test
+    public void post_with_key_not_matching_key_type_returns_400_with_error_message() throws Exception {
+        JSONObject subPayload = new JSONObject();
+        subPayload.put("type", "ssh-rsa");
+        subPayload.put("public", "AAAAC3NzaC1lZDI1NTE5AAAAIOiKKC7lLUcyvJMo1gjvMr56XvOq814Hhin0OCYFDqT4");
+        subPayload.put("comment", "happy@isr");
+        JSONObject payload = new JSONObject();
+        payload.put("ssh-key", subPayload);
+
+        mvc.perform(post("/build-server/jenkins/authorized_keys").contentType(MediaType.APPLICATION_JSON)
+                .content(payload.toString())).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", equalTo("The content of the public key is invalid for type ssh-rsa")));
+    }
 }
