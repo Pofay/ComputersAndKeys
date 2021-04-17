@@ -1,7 +1,5 @@
 package com.pofay.computersandkeys.controllers;
 
-import java.util.Base64;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,7 +12,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,8 +29,8 @@ public class AuthorizedKeysController {
     }
 
     @PostMapping(value = "/build-server/jenkins/authorized_keys", produces = "application/json")
-    public ResponseEntity addSSHKeyForService(String serviceName, @RequestBody AddSSHKeyRequest body,
-            HttpServletRequest req, HttpServletResponse res) {
+    public ResponseEntity addKeyForJenkins(@RequestBody AddSSHKeyRequest body, HttpServletRequest req,
+            HttpServletResponse res) {
 
         if (body == null) {
             return ResponseEntity.badRequest().build();
@@ -45,16 +42,12 @@ public class AuthorizedKeysController {
         if (keyVerifier.verifyKeyForKeyType(key, keyType)) {
             AuthorizedKey authorizedKey = new AuthorizedKey(key, keyType, comment);
             repo.save(authorizedKey);
-
             return ResponseEntity.status(HttpStatus.CREATED).build();
-        }
-
-        else {
+        } else {
             String errorMessage = String.format("The content of the public key is invalid for type %s", keyType);
             JSONObject payload = new JSONObject();
             payload.put("message", errorMessage);
             return ResponseEntity.status(400).body(payload.toString());
         }
-
     }
 }
