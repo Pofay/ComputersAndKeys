@@ -2,16 +2,12 @@ package com.pofay.computersandkeys.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.pofay.computersandkeys.entities.Computer;
 import com.pofay.computersandkeys.services.ComputersService;
 import com.pofay.computersandkeys.utils.ResponseFormatter;
 
-import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
