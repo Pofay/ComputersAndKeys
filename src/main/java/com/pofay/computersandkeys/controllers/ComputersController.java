@@ -27,7 +27,7 @@ public class ComputersController {
         this.service = service;
     }
 
-    @GetMapping(value = "/computers/{maker}/{model_number}", produces = "application/json")
+    @GetMapping(value = "/computers/{maker}/{model_number}", produces = { "application/json", "application/xml" })
     public ResponseEntity getComputerModel(@PathVariable("maker") String maker,
             @PathVariable("model_number") String modelNumber, HttpServletRequest req, HttpServletResponse res) {
         return service.findMatchingComputerByMakerAndModel(maker, modelNumber).map(ResponseFormatter::composeResponse)
