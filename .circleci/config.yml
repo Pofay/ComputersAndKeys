@@ -65,6 +65,7 @@ jobs: # a collection of steps
           command: |
             heroku pg:psql $HEROKU_POSTGRES_DB_NAME -f ~/ComputersAndKeys/db.sql
       - run:
+          name: Deploy Application to Heroku
           command: |
             git push heroku main
 
