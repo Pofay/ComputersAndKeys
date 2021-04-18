@@ -1,17 +1,8 @@
 #!/bin/bash
 
-wget -qO- https://cli-assets.heroku.com/install | sh
-
+sudo snap install --classic heroku
 sudo apt-get update
-sudo apt-get install cat
 
-cat > ~/.netrc << EOF
-machine api.heroku.com
-  login $HEROKU_LOGIN
-  password $HEROKU_API_KEY
-machine git.heroku.com
-  login $HEROKU_LOGIN
-  password $HEROKU_API_KEY
-EOF
-
+echo -e "machine api.heroku.com \n  login $HEROKU_LOGIN\n  password $HEROKU_API_KEY\nmachine git.heroku.com\n  login $HEROKU_LOGIN\n  password $HEROKU_API_KEY" >> ~/.netrc
+ 
 heroku git:remote -a $HEROKU_APP
