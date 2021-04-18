@@ -23,6 +23,10 @@ jobs: # a collection of steps
             - ~/.m2
           key: circleci-demo-java-spring-{{ checksum "pom.xml" }}
 
+      - run:
+          name: Initialize Database
+          command: psql -p 5432 -d computersandkeystest -f db.sql
+
       - run: mvn -Ptest package
 
       - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
