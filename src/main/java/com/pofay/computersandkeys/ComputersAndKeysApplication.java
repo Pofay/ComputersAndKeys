@@ -29,8 +29,12 @@ public class ComputersAndKeysApplication {
 
 		return (args) -> {
 			repo.deleteAll();
-			Computer c = new Computer("X507UA", "ASUS", ComputerTypes.LAPTOP, "日本語", Arrays.asList("black", "silver"));
-			repo.save(c);
+			Computer c1 = new Computer("X507UA", "ASUS", ComputerTypes.LAPTOP, "日本語", Arrays.asList("black", "silver"));
+			Computer c2 = new Computer("A407UB", "ACER", ComputerTypes.LAPTOP, "EN", Arrays.asList("red", "blue"));
+			Computer c3 = new Computer("C614RB", "IBM", ComputerTypes.LAPTOP, "EN", Arrays.asList("red"));
+			Computer c4 = new Computer("14-dv0006TU", "HP", ComputerTypes.LAPTOP, "EN", Arrays.asList("silver"));
+			Computer c5 = new Computer("GL704GV", "ASUS", ComputerTypes.LAPTOP, "EN", Arrays.asList("black", "white"));
+			repo.saveAll(Arrays.asList(c1, c2, c3, c4, c5));
 		};
 
 	}
