@@ -57,7 +57,7 @@ jobs: # a collection of steps
       enabled: true
     working_directory: ~/ComputersAndKeys
     environment:
-      HEROKU_APP: $HEROKU_APP_NAME
+      HEROKU_APP: 'intense-spire-37585'
     steps:
       - checkout
       - run:
