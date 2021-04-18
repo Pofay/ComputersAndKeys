@@ -52,3 +52,30 @@ jobs: # a collection of steps
           # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: target/demo-java-spring-0.0.1-SNAPSHOT.jar
       # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
+  deploy:
+    machine:
+      enabled: true
+      working_directory: ~/ComputersAndKeys
+    environment:
+      HEROKU_APP: $HEROKU_APP_NAME
+    steps:
+      - checkout
+      - run:
+          name: Setup Heroku
+          command: |
+            heroku pg:psql $HEROKU_POSTGRES_DB_NAME -f ~/ComputersAndKeys/db.sql
+      - run:
+          command: |
+            git push heroku main
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
