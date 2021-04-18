@@ -57,8 +57,8 @@ jobs: # a collection of steps
 
     docker: # run the steps with Docker
       - image: circleci/openjdk:11.0.3-jdk-stretch
-      environment:
-        HEROKU_APP: 'intense-spire-37585'
+        environment:
+          HEROKU_APP: 'intense-spire-37585'
     steps:
       - checkout
       - run:
