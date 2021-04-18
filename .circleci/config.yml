@@ -7,7 +7,7 @@ jobs: # a collection of steps
       - image: circleci/openjdk:11.0.3-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run
       - image: circleci/postgres:9.6.5-alpine-ram
         environment:
-          POSTGRES_DB: computersandkeystest
+          TEST_DATABASE_URL: postgresql://postgres@localhost/computersandkeystest
 
     steps: # a collection of executable commands
       - checkout # check out source code to working directory
@@ -26,7 +26,7 @@ jobs: # a collection of steps
 
       - run:
           name: Initialize Database
-          command: psql -p 5432 -d computersandkeystest -f db.sql
+          command: psql -p 5432 -d $TEST_DATABASE_URL -f db.sql
 
       - run: mvn -Ptest package
 
