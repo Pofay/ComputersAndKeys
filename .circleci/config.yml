@@ -68,7 +68,7 @@ jobs: # a collection of steps
           name: Deploy Application to Heroku
           command: |
             heroku pg:psql -f db.sql
-            mvn -Pprod clean heroku:deploy
+            git push heroku main
 
 workflows:
   version: 2
