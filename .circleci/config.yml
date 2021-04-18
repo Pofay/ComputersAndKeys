@@ -23,10 +23,21 @@ jobs: # a collection of steps
           paths:
             - ~/.m2
           key: circleci-demo-java-spring-{{ checksum "pom.xml" }}
+      - run:
+          name: Waiting for PostgreSQL to start
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 2
+            done
+            echo Failed waiting for Postgres && exit 1
 
       - run:
           name: Initialize Database
-          command: | psql -d $TEST_DATABASE_URL -f ~/ComputersAndKeys/db.sql
+          command: |
+            psql -d $TEST_DATABASE_URL -f ~/ComputersAndKeys/db.sql
 
       - run: mvn -Ptest package
 
