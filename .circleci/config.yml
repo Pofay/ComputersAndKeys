@@ -62,11 +62,11 @@ jobs: # a collection of steps
       - checkout
       - run:
           name: Setup Heroku
-          command: |
-            heroku pg:psql
+          command: bash .circleci/setup-heroku.sh
       - run:
           name: Deploy Application to Heroku
           command: |
+            heroku pg:sql -f db.sql
             git push heroku main
 
 workflows:
