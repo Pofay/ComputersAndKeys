@@ -18,7 +18,7 @@ jobs: # a collection of steps
       - run:
           name: Initialize Test Database
           command: |
-            psql -c "CREATE DATABASE computersandkeystest"
+            psql -c "CREATE DATABASE computersandkeystest" -p 5432
             psql -d computersandkeystest -f db.sql -p 5432
 
       - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
