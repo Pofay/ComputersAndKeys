@@ -26,7 +26,7 @@ jobs: # a collection of steps
 
       - run:
           name: Initialize Database
-          command: psql -h $TEST_DATABASE_URL -f ~/ComputersAndKeys/db.sql
+          command: | psql -d $TEST_DATABASE_URL -f ~/ComputersAndKeys/db.sql
 
       - run: mvn -Ptest package
 
