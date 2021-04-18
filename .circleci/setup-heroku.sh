@@ -3,7 +3,6 @@
 curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 sudo apt-get update
 sudo apt-get install postgresql
-sudo apt-get install openjdk-11-jdk
 
 cat > ~/.netrc << EOF
 machine api.heroku.com
