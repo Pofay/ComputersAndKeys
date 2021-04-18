@@ -1,7 +1,6 @@
 package com.pofay.computersandkeys;
 
 import java.util.Arrays;
-import java.util.UUID;
 
 import com.pofay.computersandkeys.entities.Computer;
 import com.pofay.computersandkeys.entities.ComputerTypes;
